@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Game</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fffae9;
+            color: #000;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Container Styling */
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        /* Phishing Example Box */
+        .phishing-example {
+            background-color: #2d2d;
+            border: 1px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .phishing-example h3 {
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .phishing-example p {
+            font-size: 1rem;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background-color: #ff2600;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* Game Link Button */
+        .game-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .game-link:hover {
+            background-color: #444;
+        }
+
+        /* Game iframe container */
+        .game-container {
+            display: none; /* Initially hidden */
+            width: 100%;
+            height: 600px;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            color: #2d2d2d;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Phishing Awareness: How to Identify Phishing Emails</h1>
+            <p>Phishing emails are fraudulent attempts to acquire sensitive information by pretending to be a trustworthy entity. In this game, you'll learn how to spot phishing emails and improve your cybersecurity awareness.</p>
+        </header>
+
+        <section>
+            <h2>What is Phishing?</h2>
+            <p>Phishing is a type of cyber attack where attackers impersonate legitimate institutions via email to steal sensitive data such as login credentials, financial information, or personal details.</p>
+            
+            <div class="phishing-example">
+                <h3>Example of a Phishing Email</h3>
+                <p><strong>Subject:</strong> Urgent: Your Account Has Been Suspended!</p>
+                <p><strong>From:</strong> support@bankingalerts.com</p>
+                <p><strong>Message:</strong> Dear User, your account has been suspended due to suspicious activities. Click <a href="#">here</a> to verify your account and restore access immediately.</p>
+                <p><strong>Red Flags:</strong> Look for strange email addresses, unexpected attachments, urgent messages asking for personal info, and suspicious links.</p>
+            </div>
+            
+            <div class="alert-box">
+                <p><strong>Alert!</strong> Always verify the sender's email address and avoid clicking on links from untrusted sources.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>How the Game Works</h2>
+            <p>In this phishing game, you'll be presented with different emails. Your task is to identify which ones are phishing attempts and which are safe. To make the game more fun and interactive, we will give you a score based on your responses.</p>
+            <ul>
+                <li>Click on the email you think is suspicious.</li>
+                <li>Identify phishing signs such as suspicious links, strange sender addresses, and urgent language.</li>
+                <li>Get instant feedback on whether your guess was correct or not.</li>
+            </ul>
+            <p>Ready to start? Click below to begin the Phishing Game.</p>
+            <a href="Phishing Awareness Game.html" target="_blank" class="game-link">Start Phishing Game</a>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Phishing Awareness Game</p>
+    </footer>
+</body>
+</html>

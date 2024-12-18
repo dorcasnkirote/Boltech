@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberQuest - Cybersecurity Games</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #000;
+      background-color: #fffae9;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Header Styling */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fffae9;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #000;
+    }
+
+    header nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    header nav ul li {
+      margin: 0 1rem;
+    }
+
+    header nav ul li a {
+      color: #000;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    header nav ul li a:hover {
+      color: #0a630a;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(to right, #2d2d2d, #000);
+      color: #fff;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero .cta-button {
+      padding: 0.8rem 2rem;
+      background-color: #66ff66;
+      color: #2d2d2d;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero .cta-button:hover {
+      background-color: #4dcb4d;
+    }
+
+    /* Showcase Section */
+    .showcase {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .showcase h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .game-cards {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background-color: #2d2d2d;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .card h3 {
+      margin-top: 1rem;
+    }
+
+    .card p {
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .card .play-button {
+      padding: 0.5rem 1rem;
+      background-color: #66ff66;
+      color: #121212;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .card .play-button:hover {
+      background-color: #4dcb4d;
+    }
+
+    /* Progress Bar in Achievements */
+    #achievements {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 80%;
+      margin: auto;
+      background-color: #e0e0e0;
+      border-radius: 20px;
+      height: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background-color: #66ff66;
+      text-align: center;
+      line-height: 30px;
+      color: #000;
+      font-weight: bold;
+      transition: width 1s ease;
+    }
+
+    /* Streak Tracker */
+    .streak-container {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .streak-container h3 {
+      margin-bottom: 1rem;
+    }
+
+    .streak-icons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .streak-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .active {
+      background-color: #ff9a47eb;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      background-color: #fffae9;
+      margin-top: 2rem;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">CyberQuest</div>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#games">Games</a></li>
+        <li><a href="#resources">Resources</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="home" class="hero">
+    <h1>Welcome to CyberQuest</h1>
+    <p>Engage, Learn, and Master Cybersecurity Through Interactive Games.</p>
+    <a href="#games" class="cta-button">Start Playing</a>
+  </section>
+
+  <!-- Achievements Progress Bar Section -->
+  <section id="achievements">
+    <h2>Your Progress</h2>
+    <div class="progress-container">
+      <div id="progress-bar" class="progress-bar">0%</div>
+    </div>
+  </section>
+
+  <!-- Streak Tracker Section -->
+  <section id="streak" class="streak-container">
+    <h3>Your Weekly Streak</h3>
+    <div class="streak-icons">
+      <div class="streak-icon active">1</div>
+      <div class="streak-icon active">2</div>
+      <div class="streak-icon active">3</div>
+      <div class="streak-icon active">4</div>
+      <div class="streak-icon">5</div>
+      <div class="streak-icon">6</div>
+      <div class="streak-icon">7</div>
+      <div class="streak-icon">8</div>
+    </div>
+  </section>
+
+  <section id="games" class="showcase">
+    <h2>Explore Our Games</h2>
+    <div class="game-cards">
+      <div class="card">
+        <img src="https://th.bing.com/th/id/OIP.RjefmPoPUb_7oIYeAiRpPAHaGu?rs=1&pid=ImgDetMain/300x200" alt="Phishing Game">
+        <h3>Phishing Threats</h3>
+        <p>Learn to identify phishing emails.</p>
+        <a href="phishing-game.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://bmmagazine.co.uk/wp-content/uploads/2021/09/shutterstock_1794130912-scaled.jpg" alt="Safe Browsing">
+        <h3>Safe Browsing and Internet Security</h3>
+        <p>Learn the essentials of browsing the internet safely. Follow best practices to protect your personal data and avoid online threats.</p>
+        <a href="safe-browsing.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://th.bing.com/th/id/R.b8ba28e33b56cbb4ff8ef263441b6fe1?rik=A7%2bpgnZ%2fWkh%2fPA&pid=ImgRaw&r=0/500x500" alt="Responding to real world Incidents">
+        <h3>Responding to Real World Incidents</h3>
+        <p>Learn how to respond to various cybersecurity incidents effectively.</p>
+        <a href="Responding to real world Incidents.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://www.protechguy.com/wp-content/uploads/sites/712/2019/04/bigstock-Padlock-Key-And-Secret-Passwor-277316197.jpg" alt="Password Strength">
+        <h3>Password Strength</h3>
+        <p>Learn to create strong and secure passwords.</p>
+        <a href="password-strength.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://static.timesofisrael.com/www/uploads/2021/07/iStock-1188482164-e1627299833752.jpg" alt="Ransomware Game">
+        <h3>Ransomware Response</h3>
+        <p>Simulate responding to a ransomware attack.</p>
+        <a href="Ransomware Response.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://static.timesofisrael.com/www/uploads/2021/07/iStock-1188482164-e1627299833752.jpg" alt="Ransomware Game">
+        <h3>Ransomware Response</h3>
+        <p>Simulate responding to a ransomware attack.</p>
+        <a href="Ransomware Response.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://static.timesofisrael.com/www/uploads/2021/07/iStock-1188482164-e1627299833752.jpg" alt="Ransomware Game">
+        <h3>Ransomware Response</h3>
+        <p>Simulate responding to a ransomware attack.</p>
+        <a href="Ransomware Response.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://static.timesofisrael.com/www/uploads/2021/07/iStock-1188482164-e1627299833752.jpg" alt="Ransomware Game">
+        <h3>Ransomware Response</h3>
+        <p>Simulate responding to a ransomware attack.</p>
+        <a href="Ransomware Response.html" class="play-button">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://static.timesofisrael.com/www/uploads/2021/07/iStock-1188482164-e1627299833752.jpg" alt="Ransomware Game">
+        <h3>Ransomware Response</h3>
+        <p>Simulate responding to a ransomware attack.</p>
+        <a href="Ransomware Response.html" class="play-button">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 CyberQuest. All rights reserved.</p>
+  </footer>
+
+  <script>
+    let levelsCompleted = 1; // Tracks completed levels
+    const totalLevels = 9;   // Total number of levels
+
+    function completeLevel(level) {
+      if (level > levelsCompleted) {
+        levelsCompleted = level;
+        updateProgress();
+        alert(`Level ${level} Completed!`);
+      } else {
+        alert(`You've already completed Level ${level}.`);
+      }
+    }
+
+    function updateProgress() {
+      const progress = (levelsCompleted / totalLevels) * 100;
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+      
+      progressBar.style.width = progress + '%';
+      progressText.innerText = Math.round(progress) + '%';
+
+      if (progress === 100) {
+        alert('Congratulations! You completed all levels.');
+      }
+    }
+  </script>
+</body>
+</html>

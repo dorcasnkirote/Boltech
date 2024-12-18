@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ransomware Awareness Game</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #5C6BC0;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #3F51B5;
+        }
+
+        #timer {
+            font-size: 20px;
+            color: #FF5722;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .puzzle {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .puzzle h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #2196F3;
+        }
+
+        .feedback {
+            font-size: 18px;
+            margin-top: 15px;
+            color: #757575;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .game-over, .game-success {
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .game-over {
+            background-color: #f44336;
+        }
+
+        .game-success {
+            background-color: #4CAF50;
+        }
+
+        .feedback span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Ransomware Awareness Game</h1>
+        <div id="timer">
+            <p>Time left: <span id="time-left">90</span> seconds</p>
+        </div>
+        
+        <!-- Puzzle Tasks Section -->
+        <div id="task-container">
+            <h2>Your Tasks:</h2>
+            <ul>
+                <li>Crack the encryption code</li>
+                <li>Identify phishing emails</li>
+                <li>Make a safe decision to prevent ransomware</li>
+            </ul>
+        </div>
+
+        <!-- Puzzle Container -->
+        <div class="puzzle">
+            <h3>File Encryption Puzzle</h3>
+            <button class="button" id="start-puzzle">Start Puzzle</button>
+            <div id="puzzle-feedback" class="feedback"></div>
+        </div>
+
+        <!-- Game Outcome -->
+        <div id="game-over" class="game-over hidden">
+            <h2>Game Over!</h2>
+            <p>Your files have been encrypted.</p>
+            <button class="button" onclick="restartGame()">Restart</button>
+        </div>
+
+        <div id="game-success" class="game-success hidden">
+            <h2>Success!</h2>
+            <p>You successfully protected your files.</p>
+            <button class="button" onclick="restartGame()">Restart</button>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let timeLeft = 90; // Timer duration in seconds
+        let puzzleCompleted = false;
+        let phishingSolved = false;
+        let safeActionTaken = false;
+
+        window.onload = function() {
+            startGame();
+        };
+
+        // Start the game logic
+        function startGame() {
+            startTimer();
+            document.getElementById('start-puzzle').addEventListener('click', startPuzzle);
+        }
+
+        // Timer countdown logic
+        function startTimer() {
+            timer = setInterval(function() {
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endGame('failure');
+                } else {
+                    timeLeft--;
+                    document.getElementById('time-left').textContent = timeLeft;
+                }
+            }, 1000);
+        }
+
+        // Start the encryption puzzle
+        function startPuzzle() {
+            document.getElementById('start-puzzle').disabled = true;
+            const correctAnswer = 'AES'; // A sample correct answer for the puzzle
+            
+            // Simulate a puzzle where the player has to input the encryption type
+            let userAnswer = prompt("What encryption method is commonly used in ransomware (e.g., AES, RSA, DES)?");
+            
+            if (userAnswer.toUpperCase() === correctAnswer) {
+                document.getElementById('puzzle-feedback').textContent = "Correct! You identified the encryption method.";
+                puzzleCompleted = true;
+                checkGameStatus();
+            } else {
+                document.getElementById('puzzle-feedback').textContent = "Incorrect. Try again!";
+            }
+        }
+
+        // Phishing email puzzle
+        function startPhishingPuzzle() {
+            let userAnswer = prompt("Which of the following emails seems suspicious? \n1. info@banking-secure.com \n2. support@trustedbank.com \n3. email@securepayments.com");
+
+            if (userAnswer === '1') {
+                alert("Correct! The first email is a phishing attempt.");
+                phishingSolved = true;
+                checkGameStatus();
+            } else {
+                alert("Incorrect! Be cautious of suspicious email addresses.");
+            }
+        }
+
+        // Safe action puzzle (selecting the correct option to prevent ransomware)
+        function safeActionPuzzle() {
+            let userAction = prompt("What action should you take to protect your files from ransomware? \n1. Open all attachments in emails \n2. Install security software and run it \n3. Ignore system warnings");
+
+            if (userAction === '2') {
+                alert("Correct! Installing and running security software can prevent ransomware.");
+                safeActionTaken = true;
+                checkGameStatus();
+            } else {
+                alert("Incorrect! Always take security seriously.");
+            }
+        }
+
+        // Check game status after completing tasks
+        function checkGameStatus() {
+            if (puzzleCompleted && phishingSolved && safeActionTaken && timeLeft > 0) {
+                endGame('success');
+            }
+        }
+
+        // End game and show feedback
+        function endGame(status) {
+            if (status === 'failure') {
+                document.getElementById('game-over').style.display = 'block';
+            } else if (status === 'success') {
+                document.getElementById('game-success').style.display = 'block';
+            }
+        }
+
+        // Restart the game
+        function restartGame() {
+            location.reload();
+        }
+
+        // Trigger the puzzles
+        setTimeout(startPhishingPuzzle, 3000); // Start phishing puzzle after 3 seconds
+        setTimeout(safeActionPuzzle, 6000);    // Start safe action puzzle after 6 seconds
+    </script>
+</body>
+</html>

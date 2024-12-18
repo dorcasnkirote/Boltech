@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ransomware Crisis Response</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffae9;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    #gameContainer {
+      text-align: center;
+      background: #2d2d2d;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      width: 80%;
+      max-width: 900px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #e62222;
+    }
+
+    #scenario {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .choice-button {
+      padding: 15px 25px;
+      margin: 10px;
+      font-size: 1.1rem;
+      background-color: #2d2d;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .choice-button:hover {
+      background-color: #2980b9;
+      transform: translateY(-5px);
+    }
+
+    .choice-button:active {
+      transform: translateY(2px);
+    }
+
+    #status {
+      margin-top: 30px;
+      font-size: 1.2rem;
+      color: #2d2d;
+    }
+
+    #timer {
+      font-size: 2rem;
+      color: #e74c3c;
+      margin-bottom: 20px;
+    }
+
+    .flash-card {
+      display: inline-block;
+      background-color: #f1c40f;
+      color: #2c3e50;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      margin: 15px 0;
+      transition: transform 0.5s ease;
+      opacity: 0;
+    }
+
+    .flash-card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #result {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    #nextBtn {
+      padding: 12px 25px;
+      font-size: 1.2rem;
+      background-color: #2ecc71;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+      transition: all 0.3s ease;
+    }
+
+    #nextBtn:hover {
+      background-color: #27ae60;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <h1>Ransomware Crisis Response</h1>
+    <div id="timer">Time Left: <span id="timeLeft">120</span> seconds</div>
+    <div id="gameUI">
+      <div id="scenario"></div>
+      <div id="choices"></div>
+      <div id="status"></div>
+      <div id="flashCard" class="flash-card"></div>
+      <button id="nextBtn" onclick="nextStep()">Next</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let timerInterval;
+    let timeLeft = 120; // Timer in seconds
+    let gameOver = false;
+
+    const steps = [
+      {
+        scenario: "You log into the network, but the servers are down. You see a warning: 'Ransomware attack detected!' What do you do?",
+        choices: [
+          { text: "Analyze the network status", action: analyzeNetwork },
+          { text: "Contact the team immediately", action: contactTeam }
+        ]
+      },
+      {
+        scenario: "You open the network status. One server is flashing red with a ransom note. What do you do next?",
+        choices: [
+          { text: "Read the ransom note", action: readRansomNote },
+          { text: "Isolate the server", action: isolateServer }
+        ]
+      },
+      {
+        scenario: "You read the ransom note: 'Pay us $100,000 or lose your data.' How do you respond?",
+        choices: [
+          { text: "Pay the ransom", action: payRansom },
+          { text: "Negotiate with the attackers", action: negotiate }
+        ]
+      },
+      {
+        scenario: "After negotiation, the attackers provide a decryption key. You enter it to decrypt files. What now?",
+        choices: [
+          { text: "Test the decryption key on a sample file", action: testDecryption },
+          { text: "Decrypt all files without testing", action: decryptAllFiles }
+        ]
+      },
+      {
+        scenario: "The decryption failed! You have 3 attempts before the attackers delete your data permanently. What do you do?",
+        choices: [
+          { text: "Call in the backup team for help", action: callBackup },
+          { text: "Try another decryption method", action: tryDecrypt }
+        ]
+      },
+      {
+        scenario: "Time is running out, and the attackers have escalated the ransom demand. You need to act fast. What will you do?",
+        choices: [
+          { text: "Pay the increased ransom", action: payIncreasedRansom },
+          { text: "Call law enforcement for assistance", action: callLawEnforcement }
+        ]
+      },
+      {
+        scenario: "After a long negotiation, the attackers release the decryption key. What do you do now?",
+        choices: [
+          { text: "Decrypt all data", action: decryptAllFiles },
+          { text: "Contact law enforcement", action: reportIncident }
+        ]
+      }
+    ];
+
+    function loadStep() {
+      const step = steps[currentStep];
+      document.getElementById("scenario").innerText = step.scenario;
+      const choicesContainer = document.getElementById("choices");
+      choicesContainer.innerHTML = "";
+      step.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.innerText = choice.text;
+        button.className = "choice-button";
+        button.onclick = choice.action;
+        choicesContainer.appendChild(button);
+      });
+      showFlashCard(step.scenario);
+    }
+
+    function nextStep() {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        loadStep();
+      }
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(function() {
+        timeLeft--;
+        document.getElementById("timeLeft").innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("Game Over! You ran out of time.");
+          gameOver = true;
+          showResult("You lost due to time running out.");
+        }
+      }, 1000);
+    }
+
+    function showFlashCard(text) {
+      const flashCard = document.getElementById("flashCard");
+      flashCard.innerText = "Tip: " + text.substring(0, 50) + "...";
+      flashCard.classList.add("show");
+      setTimeout(() => {
+        flashCard.classList.remove("show");
+      }, 5000);
+    }
+
+    function analyzeNetwork() {
+      document.getElementById("status").innerText = "You analyzed the network and found one server compromised.";
+      nextStep();
+    }
+
+    function contactTeam() {
+      document.getElementById("status").innerText = "You alerted the IT team, and they're ready to assist.";
+      nextStep();
+    }
+
+    function readRansomNote() {
+      document.getElementById("status").innerText = "The ransom note demands payment in cryptocurrency.";
+      nextStep();
+    }
+
+    function isolateServer() {
+      document.getElementById("status").innerText = "The server has been isolated to prevent the spread of the ransomware.";
+      nextStep();
+    }
+
+    function payRansom() {
+      document.getElementById("status").innerText = "You decided to pay the ransom, but you risk future attacks.";
+      nextStep();
+    }
+
+    function negotiate() {
+      document.getElementById("status").innerText = "You started negotiating with the attackers. The conversation is tense.";
+      nextStep();
+    }
+
+    function testDecryption() {
+      document.getElementById("status").innerText = "The decryption key worked! Your files are safe.";
+      nextStep();
+    }
+
+    function decryptAllFiles() {
+      document.getElementById("status").innerText = "You decrypted all files, but now you must patch the system.";
+      nextStep();
+    }
+
+    function callBackup() {
+      document.getElementById("status").innerText = "The backup team was able to recover the data.";
+      nextStep();
+    }
+
+    function tryDecrypt() {
+      document.getElementById("status").innerText = "You found an alternate method and decrypted the files!";
+      nextStep();
+    }
+
+    function payIncreasedRansom() {
+      document.getElementById("status").innerText = "The ransom is paid. The decryption key works!";
+      nextStep();
+    }
+
+    function callLawEnforcement() {
+      document.getElementById("status").innerText = "Law enforcement intervened, and the attackers were apprehended.";
+      nextStep();
+    }
+
+    function reportIncident() {
+      document.getElementById("status").innerText = "Incident reported! Investigation started.";
+      nextStep();
+    }
+
+    function showResult(result) {
+      document.getElementById("result").innerText = result;
+    }
+
+    // Start the game
+    startTimer();
+    loadStep();
+  </script>
+</body>
+</html>

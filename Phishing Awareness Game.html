@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phishing Awareness Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fffae9;
+      background-image: url("C:\Users\ADMIN\Pictures\Background.png"); /* Replace with your background image path */
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      width: 80%;
+      max-width: 1000px;
+      margin: 50px;
+      padding: 40px;
+      background-color: rgba(0, 0, 0, 0.868);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      color: #fffae9;
+      font-size: 40px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    #email-display {
+      background: #e74c3c;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .flashcard:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      background-color: #2d2d;
+      color: #fff;
+      transition: all 0.3s ease;
+      width: 220px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button:hover {
+      background-color: #2980b9;
+      transform: translateY(-5px);
+    }
+
+    #result {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 30px;
+      text-align: center;
+      color: #f39c12;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    #next-button {
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    audio {
+      display: none;
+    }
+
+    /* Progress bar styling */
+    #progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: #ddd;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #2d8bf5;
+      border-radius: 5px;
+      transition: width 0.5s ease;
+    }
+
+    /* Timer styling */
+    #timer {
+      font-size: 24px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Score display */
+    #score {
+      font-size: 24px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Phishing Awareness Game</h1>
+    <p>Test your ability to spot phishing emails. Click the buttons below to identify if the email is phishing or legitimate.</p>
+
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+    </div>
+
+    <div id="email-display" class="flashcard">
+      <!-- Email content will be dynamically displayed here -->
+    </div>
+
+    <div class="button-container">
+      <button onclick="checkAnswer(true)">This is phishing</button>
+      <button onclick="checkAnswer(false)">This is legitimate</button>
+    </div>
+
+    <div id="result"></div>
+    <div id="next-button" class="hidden">
+      <button onclick="nextEmail()">Next Email</button>
+    </div>
+
+    <div id="timer">Time Remaining: 03:00</div>
+    <div id="score">Score: 0</div>
+
+    <audio id="correct-sound" src=""C:\Users\ADMIN\Desktop\CNS Docs\CNS 3.2\Wireless and Mobile Security\church-bell-sound-effect-241382.mp3""></audio>
+    <audio id="incorrect-sound" src="incorrect-sound.mp3"></audio>
+  </div>
+
+  <script>
+    const emails = [
+      { from: 'info@bankofamerica.com', to: 'user@example.com', body: 'Dear user, your account has been compromised. Please reset your password immediately by clicking this link: www.phishinglink.com', isPhishing: true },
+      { from: 'support@amazon.com', to: 'user@example.com', body: 'Hello, your recent order has been shipped. You can track your order here: www.trackinglink.com', isPhishing: false },
+      { from: 'admin@paypal.com', to: 'user@example.com', body: 'Urgent: You have an unpaid bill, please send money immediately to the account details provided.', isPhishing: true },
+      { from: 'contact@apple.com', to: 'user@example.com', body: 'Dear user, your Apple account has been updated. Please log in to view the details.', isPhishing: false },
+      { from: 'noreply@bankofamerica.com', to: 'user@example.com', body: 'Suspicious activity detected on your account. Please verify your identity here: www.suspiciouslink.com', isPhishing: true },
+      { from: 'news@ebay.com', to: 'user@example.com', body: 'Great news! You won an exclusive prize. Click here to claim it: www.claimnow.com', isPhishing: true },
+      { from: 'info@citibank.com', to: 'user@example.com', body: 'Dear customer, your Citibank account has been locked. Click here to unlock your account: www.unlockcitibank.com', isPhishing: true },
+      { from: 'service@airbnb.com', to: 'user@example.com', body: 'Your Airbnb booking confirmation details can be found here: www.bookingdetails.com', isPhishing: false },
+      { from: 'support@paypal.com', to: 'user@example.com', body: 'Your PayPal account has been successfully updated. Log in to view recent transactions.', isPhishing: false },
+      { from: 'info@paypal.com', to: 'user@example.com', body: 'Your PayPal account has been compromised. Please log in here: www.paypal-secure.com', isPhishing: true },
+      { from: 'service@github.com', to: 'user@example.com', body: 'Your GitHub account has been updated. Check out the changes here: www.github-updates.com', isPhishing: false },
+      { from: 'alerts@microsoft.com', to: 'user@example.com', body: 'Your Microsoft account has been locked. Click here to unlock your account: www.unlockmicrosoft.com', isPhishing: true },
+      { from: 'noreply@google.com', to: 'user@example.com', body: 'Important: Google has detected suspicious activity in your account. Please verify immediately: www.verifysusactivity.com', isPhishing: true },
+      { from: 'newsletter@spotify.com', to: 'user@example.com', body: 'Congrats! You have won a premium Spotify subscription. Click here to claim it: www.claimspotify.com', isPhishing: true },
+      { from: 'admin@bankofamerica.com', to: 'user@example.com', body: 'Your recent bank transaction has been declined. Click here to resolve it: www.bankresolve.com', isPhishing: true },
+      { from: 'security@linkedin.com', to: 'user@example.com', body: 'Your LinkedIn profile has been flagged for suspicious activity. Please confirm your identity: www.linkedinsecure.com', isPhishing: true },
+      { from: 'admin@facebook.com', to: 'user@example.com', body: 'Your Facebook account needs to be verified. Click here to complete verification: www.facebookverify.com', isPhishing: true },
+      { from: 'hello@netflix.com', to: 'user@example.com', body: 'Your Netflix subscription is up for renewal. Please click here to renew now: www.netflix-renew.com', isPhishing: true }
+    ];
+
+    let currentEmailIndex = 0;
+    let score = 0;
+    let timer = 180; // 3 minutes
+    let timerInterval;
+    let progressBar = document.getElementById("progress-bar");
+    let timerDisplay = document.getElementById("timer");
+
+    function loadEmail() {
+      const email = emails[currentEmailIndex];
+      document.getElementById("email-display").innerHTML = `
+        <p><strong>From:</strong> ${email.from}</p>
+        <p><strong>To:</strong> ${email.to}</p>
+        <p><strong>Message:</strong><br>${email.body}</p>
+      `;
+      document.getElementById("result").innerText = '';
+      document.getElementById("next-button").classList.add('hidden');
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        if (timer <= 0) {
+          clearInterval(timerInterval);
+          alert('Time is up! Game Over.');
+        } else {
+          timer--;
+          const minutes = Math.floor(timer / 60);
+          const seconds = timer % 60;
+          timerDisplay.innerText = `Time Remaining: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          progressBar.style.width = `${(1 - (timer / 180)) * 100}%`; // Update progress bar
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(isPhishingAnswer) {
+      const email = emails[currentEmailIndex];
+      const resultText = document.getElementById("result");
+      const correctSound = document.getElementById("correct-sound");
+      const incorrectSound = document.getElementById("incorrect-sound");
+
+      if (isPhishingAnswer === email.isPhishing) {
+        score++;
+        resultText.innerText = "Correct! This is a " + (email.isPhishing ? "phishing" : "legitimate") + " email.";
+        correctSound.play();
+      } else {
+        resultText.innerText = "Incorrect! This email is a " + (email.isPhishing ? "phishing" : "legitimate") + " email.";
+        incorrectSound.play();
+      }
+
+      document.getElementById("score").innerText = `Score: ${score}`;
+      document.getElementById("next-button").classList.remove('hidden');
+    }
+
+    function nextEmail() {
+      currentEmailIndex++;
+      if (currentEmailIndex < emails.length) {
+        loadEmail();
+      } else {
+        document.getElementById("result").innerText = "Game Over! You've completed all the emails.";
+        document.getElementById("next-button").classList.add('hidden');
+      }
+    }
+
+    // Start the game
+    loadEmail();
+    startTimer();
+  </script>
+</body>
+</html>

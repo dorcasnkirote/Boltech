@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersecurity Escape Room Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1b1b1b;
+      color: white;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .game-container {
+      width: 80%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #2b2b2b;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .start-screen, .level-screen {
+      display: none;
+    }
+
+    .start-screen.active, .level-screen.active {
+      display: block;
+    }
+
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .buttons button {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .buttons button:hover {
+      background-color: #45a049;
+    }
+
+    .score {
+      font-size: 24px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: #fff;
+    }
+
+    .game-status {
+      font-size: 20px;
+      color: #ffcc00;
+      margin-top: 20px;
+    }
+
+    .question {
+      font-size: 22px;
+      margin: 30px 0;
+    }
+
+    .feedback {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #ff4444;
+    }
+
+    .level-title {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .level-description {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .level-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('https://via.placeholder.com/600x400') no-repeat center center;
+      background-size: cover;
+      filter: blur(5px);
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="start-screen active">
+      <h1>Cybersecurity Escape Room</h1>
+      <p>Test your cybersecurity incident response skills in this immersive game.</p>
+      <div class="buttons">
+        <button id="startBtn">Start Game</button>
+      </div>
+    </div>
+
+    <div class="level-screen" id="levelScreen">
+      <div class="level-background"></div>
+      <div class="score" id="score">Score: 0</div>
+      <div class="level-title" id="levelTitle">Level 1: Phishing Detection</div>
+      <div class="level-description" id="levelDescription">Identify phishing emails and mark them as phishing or safe.</div>
+      <div class="question" id="question">Is this email a phishing attempt?</div>
+      <div class="buttons">
+        <button id="phishingBtn">Mark as Phishing</button>
+        <button id="safeBtn">Mark as Safe</button>
+      </div>
+      <div class="game-status" id="gameStatus"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentLevel = 0;
+    let score = 0;
+    let gameStatusElement = document.getElementById("gameStatus");
+    let feedbackElement = document.getElementById("feedback");
+    let levelTitleElement = document.getElementById("levelTitle");
+    let levelDescriptionElement = document.getElementById("levelDescription");
+    let questionElement = document.getElementById("question");
+    let scoreElement = document.getElementById("score");
+    let levelScreen = document.getElementById("levelScreen");
+
+    const levels = [
+      {
+        title: "Phishing Detection",
+        description: "Identify phishing emails and mark them.",
+        question: "Is this email a phishing attempt?",
+        correctAnswer: "phishing",
+        feedback: "Correct! You marked the phishing email.",
+        wrongFeedback: "Incorrect! Look for suspicious links or strange sender addresses.",
+      },
+      {
+        title: "Ransomware Infection",
+        description: "Your machine is infected with ransomware. What will you do?",
+        question: "Should you isolate the infected system?",
+        correctAnswer: "isolate",
+        feedback: "Correct! The machine was isolated to prevent further spread.",
+        wrongFeedback: "Incorrect! Ignoring the infection could cause more damage.",
+      },
+      {
+        title: "DDoS Attack",
+        description: "A Distributed Denial-of-Service (DDoS) attack is happening.",
+        question: "Should you contact your ISP immediately?",
+        correctAnswer: "contact",
+        feedback: "Correct! You should contact the ISP for help in mitigating the attack.",
+        wrongFeedback: "Incorrect! Ignoring the DDoS attack will only worsen the situation.",
+      },
+      {
+        title: "Password Cracking Attempt",
+        description: "Hackers are trying to brute force user passwords.",
+        question: "Should you lock the account after 3 failed attempts?",
+        correctAnswer: "lock",
+        feedback: "Correct! Locking the account prevents further attempts.",
+        wrongFeedback: "Incorrect! The attacker could gain access with more attempts.",
+      },
+      {
+        title: "SQL Injection",
+        description: "An attacker is exploiting a SQL injection vulnerability.",
+        question: "Should you patch the system immediately?",
+        correctAnswer: "patch",
+        feedback: "Correct! Patching the system resolves the vulnerability.",
+        wrongFeedback: "Incorrect! Leaving the vulnerability open exposes the system.",
+      },
+      {
+        title: "Data Breach",
+        description: "A data breach has occurred, exposing sensitive data.",
+        question: "Should you notify affected users immediately?",
+        correctAnswer: "notify",
+        feedback: "Correct! Affected users must be informed so they can take action.",
+        wrongFeedback: "Incorrect! Failing to notify users might cause more harm.",
+      },
+      {
+        title: "Man-in-the-Middle Attack",
+        description: "An attacker is intercepting communication.",
+        question: "Should you use encryption to secure communication?",
+        correctAnswer: "encrypt",
+        feedback: "Correct! Encryption protects communication from being intercepted.",
+        wrongFeedback: "Incorrect! Unencrypted communication is vulnerable to interception.",
+      },
+      {
+        title: "Zero-Day Exploit",
+        description: "A new zero-day exploit has been discovered.",
+        question: "Should you update your security software immediately?",
+        correctAnswer: "update",
+        feedback: "Correct! Updating ensures protection against newly discovered exploits.",
+        wrongFeedback: "Incorrect! Failing to update leaves the system vulnerable.",
+      },
+      {
+        title: "Privilege Escalation",
+        description: "An attacker is attempting to gain higher privileges on the system.",
+        question: "Should you review user access controls?",
+        correctAnswer: "review",
+        feedback: "Correct! Reviewing access controls can prevent privilege escalation.",
+        wrongFeedback: "Incorrect! Ignoring access controls could lead to an attacker's success.",
+      },
+      {
+        title: "Network Sniffing",
+        description: "An attacker is monitoring network traffic.",
+        question: "Should you implement network segmentation?",
+        correctAnswer: "segment",
+        feedback: "Correct! Network segmentation reduces the chances of sniffing.",
+        wrongFeedback: "Incorrect! Without segmentation, sensitive traffic could be intercepted.",
+      },
+      {
+        title: "Social Engineering Attack",
+        description: "An attacker is using social engineering to manipulate employees.",
+        question: "Should you conduct employee security awareness training?",
+        correctAnswer: "train",
+        feedback: "Correct! Training helps employees recognize and avoid social engineering attacks.",
+        wrongFeedback: "Incorrect! Untrained employees are more susceptible to manipulation.",
+      },
+      {
+        title: "Phishing Website",
+        description: "An attacker has set up a fake website to steal login credentials.",
+        question: "Should you warn users to avoid suspicious links?",
+        correctAnswer: "warn",
+        feedback: "Correct! Warnings prevent users from entering sensitive data on fake sites.",
+        wrongFeedback: "Incorrect! Clicking on phishing links could result in stolen credentials.",
+      },
+      {
+        title: "Denial-of-Service (DoS)",
+        description: "A DoS attack is targeting your website.",
+        question: "Should you block incoming traffic from suspicious IPs?",
+        correctAnswer: "block",
+        feedback: "Correct! Blocking traffic from suspicious sources helps mitigate the attack.",
+        wrongFeedback: "Incorrect! Ignoring the attack will cause your site to go offline.",
+      },
+      {
+        title: "Insider Threat",
+        description: "An insider is suspected of leaking sensitive information.",
+        question: "Should you audit employee activities?",
+        correctAnswer: "audit",
+        feedback: "Correct! Auditing can help detect malicious activities from insiders.",
+        wrongFeedback: "Incorrect! Failing to audit may lead to more leaks.",
+      },
+      {
+        title: "USB Drop Attack",
+        description: "An attacker has dropped a malicious USB device on your premises.",
+        question: "Should you block USB ports on all computers?",
+        correctAnswer: "block",
+        feedback: "Correct! Blocking USB ports prevents unauthorized devices from being used.",
+        wrongFeedback: "Incorrect! Allowing USB devices could lead to malware infection.",
+      },
+      {
+        title: "Email Spoofing",
+        description: "An attacker is spoofing the sender's email address.",
+        question: "Should you use email authentication techniques like SPF and DKIM?",
+        correctAnswer: "authenticate",
+        feedback: "Correct! Authentication ensures email authenticity and prevents spoofing.",
+        wrongFeedback: "Incorrect! Without authentication, attackers can spoof email addresses.",
+      },
+      {
+        title: "Cross-Site Scripting (XSS)",
+        description: "An attacker is injecting malicious scripts into a website.",
+        question: "Should you validate user input to prevent XSS?",
+        correctAnswer: "validate",
+        feedback: "Correct! Validating input prevents malicious scripts from executing.",
+        wrongFeedback: "Incorrect! Unvalidated input could lead to XSS attacks.",
+      },
+      {
+        title: "Botnet Attack",
+        description: "A botnet is controlling multiple compromised systems.",
+        question: "Should you disconnect compromised systems from the network?",
+        correctAnswer: "disconnect",
+        feedback: "Correct! Disconnecting compromised systems helps limit the botnet's power.",
+        wrongFeedback: "Incorrect! Ignoring compromised systems allows the botnet to expand.",
+      },
+      {
+        title: "Backup Verification",
+        description: "You need to ensure your backups are working correctly.",
+        question: "Should you regularly test backup restorations?",
+        correctAnswer: "test",
+        feedback: "Correct! Regular testing ensures backups are functional and ready for use.",
+        wrongFeedback: "Incorrect! Failing to test backups could lead to problems during recovery.",
+      },
+    ];
+
+    document.getElementById("startBtn").addEventListener("click", startGame);
+
+    function startGame() {
+      document.querySelector(".start-screen").classList.remove("active");
+      document.querySelector(".level-screen").classList.add("active");
+      loadLevel();
+    }
+
+    function loadLevel() {
+      if (currentLevel < levels.length) {
+        const level = levels[currentLevel];
+        levelTitleElement.textContent = `Level ${currentLevel + 1}: ${level.title}`;
+        levelDescriptionElement.textContent = level.description;
+        questionElement.textContent = level.question;
+        feedbackElement.textContent = "";
+        gameStatusElement.textContent = `Level ${currentLevel + 1}`;
+      } else {
+        endGame();
+      }
+    }
+
+    function handleAnswer(answer) {
+      const level = levels[currentLevel];
+      if (answer === level.correctAnswer) {
+        score += 10;
+        feedbackElement.textContent = level.feedback;
+      } else {
+        feedbackElement.textContent = level.wrongFeedback;
+      }
+      scoreElement.textContent = `Score: ${score}`;
+      currentLevel++;
+      setTimeout(loadLevel, 2000);
+    }
+
+    document.getElementById("phishingBtn").addEventListener("click", () => handleAnswer("phishing"));
+    document.getElementById("safeBtn").addEventListener("click", () => handleAnswer("safe"));
+
+    function endGame() {
+      document.querySelector(".level-screen").classList.remove("active");
+      gameStatusElement.textContent = `Game Over! Your final score: ${score}`;
+    }
+  </script>
+</body>
+</html>
