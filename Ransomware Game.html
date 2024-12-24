@@ -1,305 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ransomware Crisis Response</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fffae9;
-      color: white;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ransomware Crisis: Incident Response</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #181818;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            flex-direction: column;
+        }
 
-    #gameContainer {
-      text-align: center;
-      background: #2d2d2d;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-      width: 80%;
-      max-width: 900px;
-    }
+        .game-container {
+            width: 70%;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: #e62222;
-    }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #ff5c5c;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
 
-    #scenario {
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
+        #timer {
+            font-size: 28px;
+            margin-top: 20px;
+            color: #ff5c5c;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
 
-    .choice-button {
-      padding: 15px 25px;
-      margin: 10px;
-      font-size: 1.1rem;
-      background-color: #2d2d;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    }
+        #conversation, #team-actions, #game-over {
+            font-size: 22px;
+            margin-top: 20px;
+            color: #f2f2f2;
+        }
 
-    .choice-button:hover {
-      background-color: #2980b9;
-      transform: translateY(-5px);
-    }
+        .btn {
+            background-color: #ff5c5c;
+            color: white;
+            padding: 15px 30px;
+            margin: 15px;
+            font-size: 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    .choice-button:active {
-      transform: translateY(2px);
-    }
+        .btn:hover {
+            background-color: #ff3333;
+        }
 
-    #status {
-      margin-top: 30px;
-      font-size: 1.2rem;
-      color: #2d2d;
-    }
+        .btn:active {
+            background-color: #cc0000;
+        }
 
-    #timer {
-      font-size: 2rem;
-      color: #e74c3c;
-      margin-bottom: 20px;
-    }
+        .cyber-team {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
 
-    .flash-card {
-      display: inline-block;
-      background-color: #f1c40f;
-      color: #2c3e50;
-      padding: 15px 30px;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      margin: 15px 0;
-      transition: transform 0.5s ease;
-      opacity: 0;
-    }
+        .cyber-team .btn {
+            background-color: #28a745;
+        }
 
-    .flash-card.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        .cyber-team .btn:hover {
+            background-color: #218838;
+        }
 
-    #result {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-top: 20px;
-    }
+        #game-over {
+            font-size: 30px;
+            color: #ff5c5c;
+            display: none;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
 
-    #nextBtn {
-      padding: 12px 25px;
-      font-size: 1.2rem;
-      background-color: #2ecc71;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      display: none;
-      transition: all 0.3s ease;
-    }
+        #outcome {
+            font-size: 24px;
+            color: white;
+        }
 
-    #nextBtn:hover {
-      background-color: #27ae60;
-    }
-
-  </style>
+    </style>
 </head>
 <body>
-  <div id="gameContainer">
-    <h1>Ransomware Crisis Response</h1>
-    <div id="timer">Time Left: <span id="timeLeft">120</span> seconds</div>
-    <div id="gameUI">
-      <div id="scenario"></div>
-      <div id="choices"></div>
-      <div id="status"></div>
-      <div id="flashCard" class="flash-card"></div>
-      <button id="nextBtn" onclick="nextStep()">Next</button>
+
+<div class="game-container">
+    <h1>Ransomware Crisis: Incident Response</h1>
+    <div id="timer">Time Left: <span id="timer-value">10:00</span></div>
+
+    <div id="conversation">
+        <p>The attacker has encrypted critical files. What will you do?</p>
+        <button class="btn" id="startBtn">Start Negotiation</button>
     </div>
-  </div>
 
-  <script>
-    let currentStep = 0;
+    <div id="team-actions" style="display: none;">
+        <p>Choose a response from your Cybersecurity Team:</p>
+        <div class="cyber-team">
+            <button class="btn" id="firewallBtn">Consult Firewall Expert</button>
+            <button class="btn" id="decryptionBtn">Consult Decryption Expert</button>
+            <button class="btn" id="backupBtn">Consult Backup Expert</button>
+        </div>
+    </div>
+
+    <div id="game-over">
+        <p id="outcome"></p>
+        <button class="btn" onclick="restartGame()">Restart Game</button>
+    </div>
+</div>
+
+<script>
+    let timerValue = 600; // 10 minutes in seconds
     let timerInterval;
-    let timeLeft = 120; // Timer in seconds
-    let gameOver = false;
+    let score = 0;
+    let attackerResponse = "The files are encrypted, pay up to get them back!";
+    let playerDecisions = [];
+    let currentPhase = 0;
 
-    const steps = [
-      {
-        scenario: "You log into the network, but the servers are down. You see a warning: 'Ransomware attack detected!' What do you do?",
-        choices: [
-          { text: "Analyze the network status", action: analyzeNetwork },
-          { text: "Contact the team immediately", action: contactTeam }
-        ]
-      },
-      {
-        scenario: "You open the network status. One server is flashing red with a ransom note. What do you do next?",
-        choices: [
-          { text: "Read the ransom note", action: readRansomNote },
-          { text: "Isolate the server", action: isolateServer }
-        ]
-      },
-      {
-        scenario: "You read the ransom note: 'Pay us $100,000 or lose your data.' How do you respond?",
-        choices: [
-          { text: "Pay the ransom", action: payRansom },
-          { text: "Negotiate with the attackers", action: negotiate }
-        ]
-      },
-      {
-        scenario: "After negotiation, the attackers provide a decryption key. You enter it to decrypt files. What now?",
-        choices: [
-          { text: "Test the decryption key on a sample file", action: testDecryption },
-          { text: "Decrypt all files without testing", action: decryptAllFiles }
-        ]
-      },
-      {
-        scenario: "The decryption failed! You have 3 attempts before the attackers delete your data permanently. What do you do?",
-        choices: [
-          { text: "Call in the backup team for help", action: callBackup },
-          { text: "Try another decryption method", action: tryDecrypt }
-        ]
-      },
-      {
-        scenario: "Time is running out, and the attackers have escalated the ransom demand. You need to act fast. What will you do?",
-        choices: [
-          { text: "Pay the increased ransom", action: payIncreasedRansom },
-          { text: "Call law enforcement for assistance", action: callLawEnforcement }
-        ]
-      },
-      {
-        scenario: "After a long negotiation, the attackers release the decryption key. What do you do now?",
-        choices: [
-          { text: "Decrypt all data", action: decryptAllFiles },
-          { text: "Contact law enforcement", action: reportIncident }
-        ]
-      }
-    ];
-
-    function loadStep() {
-      const step = steps[currentStep];
-      document.getElementById("scenario").innerText = step.scenario;
-      const choicesContainer = document.getElementById("choices");
-      choicesContainer.innerHTML = "";
-      step.choices.forEach((choice, index) => {
-        const button = document.createElement("button");
-        button.innerText = choice.text;
-        button.className = "choice-button";
-        button.onclick = choice.action;
-        choicesContainer.appendChild(button);
-      });
-      showFlashCard(step.scenario);
-    }
-
-    function nextStep() {
-      if (currentStep < steps.length - 1) {
-        currentStep++;
-        loadStep();
-      }
-    }
-
-    function startTimer() {
-      timerInterval = setInterval(function() {
-        timeLeft--;
-        document.getElementById("timeLeft").innerText = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          alert("Game Over! You ran out of time.");
-          gameOver = true;
-          showResult("You lost due to time running out.");
+    // Update the timer every second
+    function updateTimer() {
+        let minutes = Math.floor(timerValue / 60);
+        let seconds = timerValue % 60;
+        document.getElementById('timer-value').textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        
+        if (timerValue === 0) {
+            endGame("Time's up! You failed to resolve the ransomware attack.");
+        } else {
+            timerValue--;
         }
-      }, 1000);
     }
 
-    function showFlashCard(text) {
-      const flashCard = document.getElementById("flashCard");
-      flashCard.innerText = "Tip: " + text.substring(0, 50) + "...";
-      flashCard.classList.add("show");
-      setTimeout(() => {
-        flashCard.classList.remove("show");
-      }, 5000);
+    // Start the conversation with the attacker
+    function startConversation() {
+        playerDecisions.push("Started negotiating with the attacker.");
+        document.getElementById('conversation').innerHTML = `
+            <p>The attacker says: "Your files are encrypted. Pay me $500,000 in Bitcoin or lose them forever!"</p>
+            <p>What will you do?</p>
+            <button class="btn" onclick="makeDecision('Pay')">Offer to Pay</button>
+            <button class="btn" onclick="makeDecision('Stall')">Stall for Time</button>
+            <button class="btn" onclick="makeDecision('Threaten')">Threaten Legal Action</button>
+        `;
+        currentPhase = 1;
+        startTimer();
     }
 
-    function analyzeNetwork() {
-      document.getElementById("status").innerText = "You analyzed the network and found one server compromised.";
-      nextStep();
+    // Handle player decisions and update the game state
+    function makeDecision(choice) {
+        playerDecisions.push(choice);
+        if (choice === 'Pay') {
+            attackerResponse = "I will decrypt the files once the payment is confirmed.";
+            score += 10;
+        } else if (choice === 'Stall') {
+            attackerResponse = "You're wasting my time! Pay now!";
+            score += 5;
+        } else if (choice === 'Threaten') {
+            attackerResponse = "You can't scare me. Pay the ransom now or lose the files!";
+            score -= 10;
+        }
+        updateConversation();
     }
 
-    function contactTeam() {
-      document.getElementById("status").innerText = "You alerted the IT team, and they're ready to assist.";
-      nextStep();
+    // Update the conversation after player makes a decision
+    function updateConversation() {
+        if (currentPhase === 1) {
+            document.getElementById('conversation').innerHTML = `
+                <p>The attacker says: "${attackerResponse}"</p>
+                <p>Your next move:</p>
+                <button class="btn" onclick="makeDecision('Pay')">Offer to Pay</button>
+                <button class="btn" onclick="makeDecision('Stall')">Stall for Time</button>
+                <button class="btn" onclick="makeDecision('Threaten')">Threaten Legal Action</button>
+            `;
+            document.getElementById('team-actions').style.display = "block";
+            document.getElementById('conversation').style.display = "none";
+        } else {
+            document.getElementById('conversation').innerHTML = `
+                <p>The attacker says: "${attackerResponse}"</p>
+                <p>What do you want to do next?</p>
+                <button class="btn" onclick="makeDecision('Pay')">Offer to Pay</button>
+                <button class="btn" onclick="makeDecision('Stall')">Stall for Time</button>
+                <button class="btn" onclick="makeDecision('Threaten')">Threaten Legal Action</button>
+            `;
+        }
     }
 
-    function readRansomNote() {
-      document.getElementById("status").innerText = "The ransom note demands payment in cryptocurrency.";
-      nextStep();
+    // Consult with a cybersecurity expert
+    function consultTeam(expertType) {
+        playerDecisions.push(`Consulted ${expertType} expert`);
+        if (expertType === 'Firewall') {
+            attackerResponse = "The firewall is vulnerable. We need to patch it.";
+        } else if (expertType === 'Decryption') {
+            attackerResponse = "We have a possible decryption tool, but it’s risky.";
+        } else if (expertType === 'Backup') {
+            attackerResponse = "The backups are intact. We can restore the files soon.";
+        }
+        updateConversation();
     }
 
-    function isolateServer() {
-      document.getElementById("status").innerText = "The server has been isolated to prevent the spread of the ransomware.";
-      nextStep();
+    // Start the timer
+    function startTimer() {
+        if (!timerInterval) {
+            timerInterval = setInterval(updateTimer, 1000);
+        }
     }
 
-    function payRansom() {
-      document.getElementById("status").innerText = "You decided to pay the ransom, but you risk future attacks.";
-      nextStep();
+    // End the game with a message
+    function endGame(message) {
+        clearInterval(timerInterval);
+        document.getElementById('game-over').style.display = "block";
+        document.getElementById('outcome').textContent = `${message} Your final score is: ${score}`;
+        document.getElementById('timer').style.display = "none";
     }
 
-    function negotiate() {
-      document.getElementById("status").innerText = "You started negotiating with the attackers. The conversation is tense.";
-      nextStep();
+    // Restart the game
+    function restartGame() {
+        window.location.reload();
     }
 
-    function testDecryption() {
-      document.getElementById("status").innerText = "The decryption key worked! Your files are safe.";
-      nextStep();
-    }
+    // Event Listeners for buttons
+    document.getElementById('startBtn').addEventListener('click', startConversation);
+    document.getElementById('firewallBtn').addEventListener('click', function() { consultTeam('Firewall') });
+    document.getElementById('decryptionBtn').addEventListener('click', function() { consultTeam('Decryption') });
+    document.getElementById('backupBtn').addEventListener('click', function() { consultTeam('Backup') });
+</script>
 
-    function decryptAllFiles() {
-      document.getElementById("status").innerText = "You decrypted all files, but now you must patch the system.";
-      nextStep();
-    }
-
-    function callBackup() {
-      document.getElementById("status").innerText = "The backup team was able to recover the data.";
-      nextStep();
-    }
-
-    function tryDecrypt() {
-      document.getElementById("status").innerText = "You found an alternate method and decrypted the files!";
-      nextStep();
-    }
-
-    function payIncreasedRansom() {
-      document.getElementById("status").innerText = "The ransom is paid. The decryption key works!";
-      nextStep();
-    }
-
-    function callLawEnforcement() {
-      document.getElementById("status").innerText = "Law enforcement intervened, and the attackers were apprehended.";
-      nextStep();
-    }
-
-    function reportIncident() {
-      document.getElementById("status").innerText = "Incident reported! Investigation started.";
-      nextStep();
-    }
-
-    function showResult(result) {
-      document.getElementById("result").innerText = result;
-    }
-
-    // Start the game
-    startTimer();
-    loadStep();
-  </script>
 </body>
 </html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Challenge</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg,  #01579b, #00838f);
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 2.5em;
+            animation: fadeIn 2s;
+        }
+
+        .question {
+            font-size: 1.5em;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background: rgba(0, 167, 39, 0.867);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(221, 34, 34, 0.867);
+        }
+
+        #result {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .score-timer {
+            margin: 20px;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            margin-top: 220px;
+            font-size: 1.3em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OSINT Challenge</h1>
+        <div class="score-timer">
+            <div>Score: <span id="score">0</span></div>
+            <div>Time Left: <span id="timer">30</span>s</div>
+        </div>
+
+        <div id="question-box" class="question">🔍 <strong>Question will appear here...</strong></div>
+        <div id="options"></div>
+        <button onclick="submitAnswer()">Submit Answer</button>
+
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        Created for Cybersecurity Awareness | OSINT Challenge Game
+    </footer>
+
+    <script>
+        // Questions and Answers
+const questions = [
+    {
+        question: "What does the acronym 'VPN' stand for?",
+        options: ["Virtual Private Network", "Very Personal Network", "Virtual Protocol Network"],
+        correct: 0 // Index of the correct answer
+    },
+    {
+        question: "What is phishing?",
+        options: [
+            "A method to catch fish",
+            "A cyber attack to steal sensitive information",
+            "A way to encrypt your data"
+        ],
+        correct: 1
+    },
+    {
+        question: "Which of the following is a strong password?",
+        options: ["12345678", "password123", "P@ssw0rd!2024"],
+        correct: 2
+    },
+    {
+        question: "What is the main purpose of a firewall?",
+        options: [
+            "To physically block access to your computer",
+            "To prevent unauthorized access to your network",
+            "To speed up your internet connection"
+        ],
+        correct: 1
+    },
+    {
+        question: "Which is an example of two-factor authentication?",
+        options: [
+            "Password and username",
+            "Password and a security question",
+            "Password and a one-time code sent to your phone"
+        ],
+        correct: 2
+    },
+    {
+        question: "What does HTTPS stand for?",
+        options: [
+            "HyperText Transfer Protocol Secure",
+            "Hyper Transfer Text Protocol",
+            "High Transfer Text Security"
+        ],
+        correct: 0
+    },
+    {
+        question: "What is the safest way to share sensitive information online?",
+        options: [
+            "Send it via email without encryption",
+            "Use a secure file-sharing service",
+            "Post it on social media but delete it after"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is a common sign of a phishing email?",
+        options: [
+            "Spelling and grammar errors",
+            "A legitimate-looking sender address",
+            "Professional formatting"
+        ],
+        correct: 0
+    },
+    {
+        question: "Why should you avoid using public Wi-Fi for sensitive activities?",
+        options: [
+            "It can be slow",
+            "It may expose your data to attackers",
+            "It does not support high-quality video streaming"
+        ],
+        correct: 1
+    },
+    {
+        question: "What should you do if you receive a suspicious link in an email?",
+        options: [
+            "Click it to see where it goes",
+            "Hover over it to check the URL",
+            "Ignore it completely"
+        ],
+        correct: 1
+    },
+    {
+        question: "What does 'malware' stand for?",
+        options: [
+            "Malfunctioned software",
+            "Malicious software",
+            "Manual warehousing"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is a secure way to store your passwords?",
+        options: [
+            "Write them on a sticky note",
+            "Store them in an encrypted password manager",
+            "Save them in a text file on your desktop"
+        ],
+        correct: 1
+    },
+    {
+        question: "What should you do if your computer gets infected with ransomware?",
+        options: [
+            "Pay the ransom immediately",
+            "Turn off the computer and call IT support",
+            "Ignore it and continue working"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is the purpose of antivirus software?",
+        options: [
+            "To clean junk files",
+            "To detect and remove malicious software",
+            "To block pop-up ads"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is 'social engineering' in cybersecurity?",
+        options: [
+            "Hacking people instead of systems",
+            "Building social networks for engineers",
+            "Improving social media algorithms"
+        ],
+        correct: 0
+    },
+    {
+        question: "Why is it important to update software regularly?",
+        options: [
+            "To get the latest features and security patches",
+            "To speed up your computer",
+            "To ensure backward compatibility"
+        ],
+        correct: 0
+    },
+    {
+        question: "What is the function of a CAPTCHA?",
+        options: [
+            "To speed up online forms",
+            "To verify that the user is human",
+            "To encrypt passwords"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is the main goal of encryption?",
+        options: [
+            "To make data accessible to everyone",
+            "To convert data into unreadable formats for unauthorized users",
+            "To delete unnecessary data"
+        ],
+        correct: 1
+    },
+    {
+        question: "What does 'cyber hygiene' refer to?",
+        options: [
+            "The cleanliness of your computer hardware",
+            "Practices to ensure good cybersecurity habits",
+            "The organization of your desktop icons"
+        ],
+        correct: 1
+    },
+    {
+        question: "What is a data breach?",
+        options: [
+            "A loss of internet connection",
+            "An incident where sensitive data is accessed without authorization",
+            "A server crash due to overuse"
+        ],
+        correct: 1
+    }
+];
+
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 30;
+        let timerInterval;
+        let selectedAnswer = -1;
+
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex];
+                document.getElementById("question-box").innerHTML = `🔍 <strong>${question.question}</strong>`;
+                
+                const optionsDiv = document.getElementById("options");
+                optionsDiv.innerHTML = "";
+
+                question.options.forEach((option, index) => {
+                    optionsDiv.innerHTML += `
+                        <div>
+                            <input type="radio" name="option" value="${index}" id="option${index}">
+                            <label for="option${index}">${option}</label>
+                        </div>
+                    `;
+                });
+
+                startTimer();
+            } else {
+                endGame();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            document.getElementById("timer").innerText = timeLeft;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitAnswer(true);
+                }
+            }, 1000);
+        }
+
+        function submitAnswer(timeUp = false) {
+            clearInterval(timerInterval);
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            selectedAnswer = selectedOption ? parseInt(selectedOption.value) : -1;
+
+            const question = questions[currentQuestionIndex];
+            if (timeUp) {
+                document.getElementById("result").innerHTML = "⏰ Time's up! Moving to the next question.";
+                document.getElementById("result").style.color = "orange";
+            } else if (selectedAnswer === question.correct) {
+                score += 10;
+                document.getElementById("result").innerHTML = "✅ Correct! +10 points.";
+                document.getElementById("result").style.color = "#0f0";
+            } else {
+                document.getElementById("result").innerHTML = `❌ Incorrect! The correct answer was: ${question.options[question.correct]}`;
+                document.getElementById("result").style.color = "#f00";
+            }
+
+            document.getElementById("score").innerText = score;
+            currentQuestionIndex++;
+
+            setTimeout(loadQuestion, 2000);
+        }
+
+        function endGame() {
+            document.getElementById("question-box").innerHTML = `🎉 Game Over! Your final score is <strong>${score}</strong> points.`;
+            document.getElementById("options").style.display = "none";
+            document.querySelector("button").style.display = "none";
+            document.getElementById("result").style.display = "none";
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

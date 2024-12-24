@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Driving Game</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        .ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            z-index: 1;
+        }
+        .button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui">
+        <button class="button" onclick="startGame()">Start Game</button>
+        <p id="score">Score: 0</p>
+        <p id="event">Current Event: None</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer;
+        let car, road, junctions = [];
+        let speed = 0.1, carDirection = { left: false, right: false, forward: false, back: false };
+        let score = 0, currentEvent = null;
+        let roadSpeed = 0.05;
+        let gameStarted = false;
+
+        // Initialize scene
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+        
+            // Road setup
+            createRoad();
+        
+            // Car setup
+            let carGeometry = new THREE.BoxGeometry(1, 0.5, 2);
+            let carMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            car = new THREE.Mesh(carGeometry, carMaterial);
+            car.position.set(0, 0.25, -20);
+            scene.add(car);
+        
+            // Camera setup
+            camera.position.z = 5;
+            camera.position.y = 1;
+            camera.lookAt(0, 0, 0);
+        
+            // Lighting
+            let light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(0, 10, 0);
+            scene.add(light);
+        
+            // Event listener for car movement
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'a') carDirection.left = true;
+                if (event.key === 'd') carDirection.right = true;
+                if (event.key === 'w') carDirection.forward = true;
+                if (event.key === 's') carDirection.back = true;
+            });
+        
+            document.addEventListener('keyup', function(event) {
+                if (event.key === 'a') carDirection.left = false;
+                if (event.key === 'd') carDirection.right = false;
+                if (event.key === 'w') carDirection.forward = false;
+                if (event.key === 's') carDirection.back = false;
+            });
+        
+            // Game loop
+            animate();
+        }
+
+        // Create road with junctions and signs
+        function createRoad() {
+            let roadGeometry = new THREE.BoxGeometry(20, 0.1, 200); // Make the road longer
+            let roadMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
+            road = new THREE.Mesh(roadGeometry, roadMaterial);
+            road.position.y = -0.05;
+            scene.add(road);
+
+            // Add junctions and road signs
+            createJunction(0, -100, 'left');
+            createJunction(10, -200, 'right');
+        }
+
+        // Create junctions with basic signposts
+        function createJunction(x, z, direction) {
+            let junction = new THREE.Object3D();
+            
+            // Create road sign post
+            let signGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3, 10);
+            let signMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+            let sign = new THREE.Mesh(signGeometry, signMaterial);
+            sign.position.set(x, 1.5, z);
+            junction.add(sign);
+
+            // Add text to the signpost
+            let signText = new THREE.TextGeometry(direction === 'left' ? 'Turn Left' : 'Turn Right', {
+                font: new THREE.FontLoader().parse('{"metadata":{"version":4,"type":"Font","generator":"data:font"},"glyphs":{}}'),
+                size: 1,
+                height: 0.1
+            });
+            let signTextMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            let signMesh = new THREE.Mesh(signText, signTextMaterial);
+            signMesh.position.set(x - 2, 2, z);
+            junction.add(signMesh);
+
+            scene.add(junction);
+            junctions.push(junction);
+        }
+
+        // Start the game
+        function startGame() {
+            if (!gameStarted) {
+                gameStarted = true;
+                document.querySelector('.ui').style.display = 'none';  // Hide start button
+                document.getElementById('score').style.display = 'block';
+                document.getElementById('event').style.display = 'block';
+            }
+        }
+
+        // Game loop function
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Move car based on controls
+            if (carDirection.forward) car.position.z += speed;
+            if (carDirection.back) car.position.z -= speed;
+            if (carDirection.left) car.rotation.y += 0.05;
+            if (carDirection.right) car.rotation.y -= 0.05;
+
+            // Move the road
+            road.position.z += roadSpeed;
+            if (road.position.z > 0) road.position.z = -200;
+
+            // Move junctions
+            for (let junction of junctions) {
+                junction.position.z += roadSpeed;
+            }
+
+            // Camera follows car
+            camera.position.z = car.position.z + 5;
+            camera.position.x = car.position.x;
+            camera.lookAt(car.position);
+
+            // Trigger events (e.g., cybersecurity decisions)
+            triggerCyberSecurityEvent();
+
+            // Render the scene
+            renderer.render(scene, camera);
+        }
+
+        // Trigger cybersecurity event (e.g., phishing)
+        function triggerCyberSecurityEvent() {
+            if (car.position.z > 10 && car.position.z < 15 && !currentEvent) {
+                currentEvent = 'Phishing Alert! What do you do?';
+                document.getElementById('event').innerText = 'Current Event: ' + currentEvent;
+                score -= 10;  // Penalize for triggering event without taking action
+                document.getElementById('score').innerText = 'Score: ' + score;
+
+                setTimeout(() => {
+                    // Give options for decision making
+                    let choice = prompt("You received an email asking for your login details. What do you do?\n1. Click the link.\n2. Ignore the email.");
+                    if (choice === '2') {
+                        score += 20;  // Reward for good decision
+                        alert("Good choice! You've avoided a phishing attack.");
+                    } else {
+                        score -= 20;  // Penalize for phishing mistake
+                        alert("Phishing attempt! Your account is compromised.");
+                    }
+                    currentEvent = null;  // Reset event after decision
+                    document.getElementById('event').innerText = 'Current Event: None';
+                    document.getElementById('score').innerText = 'Score: ' + score;
+                }, 1000);
+            }
+        }
+
+        // Initialize game
+        init();
+    </script>
+</body>
+</html>

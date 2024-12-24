@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gone Phishing Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #46acff, #fffae9;
+            overflow: hidden;
+        }
+
+        .game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            color: white;
+            font-size: 36px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .email {
+            margin: 20px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            color: white;
+            display: none;
+            font-size: 18px;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .score {
+            margin-top: 30px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .sea {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #01579b, #00838f);
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .fish {
+            position: absolute;
+            bottom: 50;
+            width: 60px;
+            height: 60px;
+            animation: fish-swim 6s linear infinite;
+        }
+
+        .fish.phishing {
+            animation: fish-swim 6s linear infinite, phishing-bite 0.5s ease-in-out forwards;
+        }
+
+        .fish.safe {
+            animation: fish-swim 6s linear infinite, safe-bite 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fish-swim {
+            0% { transform: translateX(-100px); }
+            50% { transform: translateX(100vw); }
+            100% { transform: translateX(-100px); }
+        }
+
+        @keyframes phishing-bite {
+            0% { transform: translateY(0) rotate(0); }
+            100% { transform: translateY(-40px) rotate(360deg); }
+        }
+
+        @keyframes safe-bite {
+            0% { transform: translateY(0) rotate(0); }
+            100% { transform: translateY(-30px) rotate(-360deg); }
+        }
+
+        .hacker {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            background-image: url('https://image.shutterstock.com/image-vector/hacker-avatar-profile-male-young-260nw-1141176989.jpg');
+            background-size: cover;
+            z-index: 2;
+        }
+
+        .fishing-hook {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            width: 4px;
+            height: 100px;
+            background-color: #333;
+            border-radius: 2px;
+            z-index: 1;
+            animation: hook-move 6s ease-in-out infinite;
+        }
+
+        @keyframes hook-move {
+            0% { top: -50px; }
+            100% { top: -200px; }
+        }
+
+        .game-over {
+            font-size: 30px;
+            color: white;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sea"></div>
+
+<div class="game-container">
+    <h1>Gone Phishing!</h1>
+    <div class="email" id="email-subject"></div>
+    <div class="email" id="email-body"></div>
+
+    <div class="button-container">
+        <button id="btn-yes">Yes, it's phishing!</button>
+        <button id="btn-no">No, it's safe.</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+    <div class="score" id="score">Score: <span id="score-value">0</span></div>
+</div>
+
+<div class="hacker"></div>
+<div class="fishing-hook"></div>
+
+<div class="game-over" id="game-over">Game Over! Your final score is <span id="final-score"></span></div>
+
+<script>
+    const emailSubjects = [
+        "Urgent: Your account has been compromised!",
+        "Congratulations! You've won a prize!",
+        "Important: System update required!",
+        "Hey, I need your help with a quick favor!",
+        "Your bank account is frozen!"
+    ];
+
+    const emailBodies = [
+        "Dear user, click the link below to secure your account: [phishinglink.com]",
+        "You've won a free gift card! Claim it here: [scamlink.com]",
+        "Your system is outdated, click to update now: [maliciouslink.com]",
+        "I need a favor, click here: [viruslink.com]",
+        "Your bank account has been frozen due to suspicious activity. Click here to resolve: [maliciouslink.com]"
+    ];
+
+    const isPhishing = [true, true, false, true, true]; // true for phishing, false for safe
+    let currentEmailIndex = 0;
+    let score = 0;
+    const emailSubjectEl = document.getElementById("email-subject");
+    const emailBodyEl = document.getElementById("email-body");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreValueEl = document.getElementById("score-value");
+    const gameOverEl = document.getElementById("game-over");
+    const finalScoreEl = document.getElementById("final-score");
+
+    const btnYes = document.getElementById("btn-yes");
+    const btnNo = document.getElementById("btn-no");
+
+    function generateFish() {
+        const fish = document.createElement("div");
+        fish.classList.add("fish");
+        fish.classList.add(isPhishing[currentEmailIndex] ? "phishing" : "safe");
+        fish.style.left = Math.random() * 100 + "vw";
+        fish.style.bottom = -Math.random() * 60 + "px";
+        document.body.appendChild(fish);
+
+        setTimeout(() => fish.remove(), 6000); // Remove fish after 6 seconds
+    }
+
+    function showEmail() {
+        emailSubjectEl.textContent = emailSubjects[currentEmailIndex];
+        emailBodyEl.textContent = emailBodies[currentEmailIndex];
+        emailSubjectEl.style.display = "block";
+        emailBodyEl.style.display = "block";
+        generateFish();
+    }
+
+    function checkAnswer(isPhishingAnswer) {
+        if (isPhishingAnswer === isPhishing[currentEmailIndex]) {
+            feedbackEl.textContent = "Correct! Well done.";
+            feedbackEl.style.color = "black";
+            score++;
+        } else {
+            feedbackEl.textContent = "Oops! That's a phishing attempt!";
+            feedbackEl.style.color = "red";
+        }
+
+        scoreValueEl.textContent = score;
+        currentEmailIndex++;
+
+        if (currentEmailIndex < emailSubjects.length) {
+            setTimeout(showEmail, 1500);
+        } else {
+            setTimeout(endGame, 1500);
+        }
+    }
+
+    function endGame() {
+        emailSubjectEl.style.display = "none";
+        emailBodyEl.style.display = "none";
+        gameOverEl.style.display = "block";
+        finalScoreEl.textContent = score;
+    }
+
+    btnYes.addEventListener("click", () => checkAnswer(true));
+    btnNo.addEventListener("click", () => checkAnswer(false));
+
+    showEmail(); // Start the game when the page loads
+</script>
+
+</body>
+</html>
